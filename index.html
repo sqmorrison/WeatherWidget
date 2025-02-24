@@ -36,29 +36,34 @@
         <div class="card border-dark text-bg-light col-12 col-md-6 col-lg-3 p-4" style="max-width: 30rem;">
             <div class="card-body">
                    <div class="row align-items-center">
-                        <h6 class="col-sm-4" id="txtTemp"></h6>
-                        <i class="col-sm-4 bi bi-cloud-drizzle" style="font-size: 1.75rem; color: cornflowerblue;"></i>
-                        <div class="col-sm-4">
+                        <div class="col-4">
+                            <label>Current</label>
+                            <h6 id="txtTemp"></h6>
+                        </div>
+                        
+                        <div id="iconWeather" class="col-4">
+                            <i class="bi bi-cloud-drizzle" style="font-size: 1.75rem; color: cornflowerblue;"></i>
+                        </div>
+                        <div class="col-4" id="icnSunPhase">
                             <i class="bi bi-sunset-fill" style="font-size: 1.5rem; color: var(--myAccent);"></i>
                                 <label>6:00pm</label>
                         </div>
                         
                     </div> 
                     <div class="row align-items-center">
-                        <div class="col-sm-4">
+                        <div class="col-4">
                             <p class="mb-0" id="txtHigh">H: 38</p>
                             <p class="mt-0" id="txtLow">L: 26</p>
                         </div>
-                            <div class="col-sm-8 mb-4">
-                                <i class="bi bi-moisture" style="font-size: 1.5rem; color: cornflowerblue;"></i>
+                        <div class="col-8 mb-4">
+                            <i class="bi bi-moisture" style="font-size: 1.5rem; color: cornflowerblue;"></i>
                             <label class="mr-1" id="txtHumidity"></label>
-                            </div>
-                        </div>  
+                        </div> 
                     </div> 
-                    <p>It is colder than yesterday.</p>
+                    <p id="txtCoH">It is colder than yesterday.</p>
                     <div class="row mb-1">
-                        <p class="col-sm-4">location: </p>
-                        <select class="col-sm-6">
+                        <p class="col-4">location: </p>
+                        <select class="col-6" id="locationSelect">
                             <option selected value="Cookeville">
                                 Cookeville
                             </option>
@@ -67,6 +72,7 @@
                             <option value="Memphis">Memphis</option>
                         </select>
                     </div>
+                    <a href="https://open-meteo.com/en/docs#latitude=52.52&longitude=13.41&current=temperature_2m,relative_humidity_2m,precipitation,rain,showers,snowfall,weather_code&minutely_15=&hourly=&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FChicago&past_days=1&models=" class="mt-3">Data provided by open-mateo.com</a>
             </div>
         </div>
     </div>
@@ -80,9 +86,84 @@
         const txtHumidity = document.getElementById("txtHumidity");
         const txtHigh = document.getElementById("txtHigh");
         const txtLow = document.getElementById("txtLow");
+        const icnWeather = document.getElementById("iconWeather");
+        const icnSun = document.getElementById("icnSunPhase");
+        const txtCoH = document.getElementById("txtCoH");
+        const localSelect = document.getElementById("locationSelect");
 
-        async function getData() {
-            const url = "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current=temperature_2m,relative_humidity_2m,precipitation,rain,showers,snowfall,weather_code&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FChicago&past_days=1";
+        localSelect.addEventListener('change', function(){
+            setLocation(localSelect.value);
+        })
+
+        document.addEventListener("DOMContentLoaded", (event) => {
+            getData(36.15, -85.50);
+        });
+
+        function setLocation(slcCity){
+            let arrCookeville = [36.15, -85.50];
+            let arrKnoxville = [35.96, -83.92];
+            let arrNashville = [36.16, -86.78];
+            let arrMemphis = [35.14, -90.04];
+
+            if(slcCity == "Cookeville"){
+                getData(arrCookeville[0],arrCookeville[1]);
+            }
+            else if(slcCity == "Knoxville"){
+                getData(arrKnoxville[0],arrKnoxville[1]);
+            }
+            else if(slcCity == "Nashville"){
+                getData(arrNashville[0],arrNashville[1]);
+            }
+            else if(slcCity == "Memphis"){
+                getData(arrMemphis[0],arrMemphis[1]);
+            }
+            else{
+                getData(arrCookeville[0],arrCookeville[1]);
+            }
+        }
+
+        function isColder(intTodaysTemp, intYestTemp){
+            if(intTodaysTemp < intYestTemp){
+                txtCoH.innerHTML = "It is cooler than yesterday";
+            }
+            else if(intTodaysTemp == intYestTemp){
+                txtCoH.innerHTML = "The temp is similar to yesterday";
+            }
+            else{
+                txtCoH.innerHTML = "It is warmer than yesterday";
+            }
+        }
+
+        function setWeatherIcon(intRain, intSnow){
+            if(intRain != 0){
+                icnWeather.innerHTML = `<i class="bi bi-cloud-drizzle" style="font-size: 1.75rem; color: cornflowerblue;"></i>`;
+            }
+            else if (intSnow != 0) {
+                icnWeather.innerHTML = `<i class="bi bi-cloud-snow" style="font-size: 1.75rem; color: cornflowerblue;"></i>`;
+            } else {
+                icnWeather.innerHTML = `<i class="bi bi-brightness-high" style="font-size: 1.75rem; color: black;"></i>`;
+            }
+        }
+
+        function sunTime(isoTime, isoSunRise, isoSunSet){
+            dateTime = new Date(isoTime);
+            dateSunRise = new Date(isoSunRise);
+            dateSunSet = new Date(isoSunSet);
+
+            if((dateTime < dateSunRise)){
+                icnSun.innerHTML=`
+                    <i class="bi bi-sunrise" style="font-size: 1.5rem; color: var(--mySecondary);"></i>
+                ` + `<label class="mr-1">` + dateSunRise.getHours() + `:00` + `</label>`;
+            }
+            else{
+                icnSun.innerHTML=`
+                    <i class="bi bi-sunset" style="font-size: 1.5rem; color: var(--myAccent);"></i>
+                ` + `<label>` + dateSunSet.getHours() + `:00`+ `</label>`;
+            }
+        }
+
+        async function getData(lat, long) {
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&current=temperature_2m,relative_humidity_2m,precipitation,rain,showers,snowfall,weather_code&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FChicago&past_days=1`;
             try {
                 const response = await fetch(url);
                 if (!response.ok) {
@@ -90,11 +171,15 @@
                 }
 
                 const json = await response.json();
-                currentTemp += json["current"]["temperature_2m"] + "°F";
-                currentHumid += json["current"]["relative_humidity_2m"] + "%";
-                dailyHigh += "H:" + json["daily"]["temperature_2m_max"][0] + "°F";
-                dailyLow +=  "H:" + json["daily"]["temperature_2m_min"][0] + "°F";
-                console.log(json);
+
+                currentTemp = json["current"]["temperature_2m"] + "°F";
+                currentHumid = json["current"]["relative_humidity_2m"] + "%";
+                dailyHigh = "H:" + json["daily"]["temperature_2m_max"][1] + "°F";
+                dailyLow =  "L:" + json["daily"]["temperature_2m_min"][1] + "°F";
+
+                setWeatherIcon(json["current"]["rain"],json["current"]["snowfall"]);
+                sunTime(json["current"]["time"],json["daily"]["sunrise"][1],json["daily"]["sunset"][1]);
+                isColder(json["daily"]["temperature_2m_max"][1],json["daily"]["temperature_2m_max"][0])
                 txtTemp.innerHTML = currentTemp;
                 txtHumidity.innerHTML = currentHumid;
                 txtHigh.innerHTML = dailyHigh;
@@ -103,15 +188,13 @@
                 console.error(error.message);
             }
         }
-
-        getData();
     </script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>
 
 <!-- 
 I used generative ai (chatgpt) to explain to me the code snippet from the assignment, along with image generation for the favicon/home icon
-I also used gemini through a google search clarifying what a web widget is, and used it to debug some erros I had with my custom css
+I also used gemini through a google search clarifying what a web widget is.
+Later, I used chatgpt to debug some errors I had with my custom css and getData function
 -->
