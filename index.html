@@ -42,10 +42,10 @@
                         </div>
                         
                         <div id="iconWeather" class="col-4">
-                            <i class="bi bi-cloud-drizzle" style="font-size: 1.75rem; color: cornflowerblue;"></i>
+                            <i class="bi bi-cloud-drizzle" alt="rain cloud" style="font-size: 1.75rem; color: cornflowerblue;"></i>
                         </div>
                         <div class="col-4" id="icnSunPhase">
-                            <i class="bi bi-sunset-fill" style="font-size: 1.5rem; color: var(--myAccent);"></i>
+                            <i class="bi bi-sunset-fill" alt="Sunset" style="font-size: 1.5rem; color: var(--myAccent);"></i>
                                 <label>6:00pm</label>
                         </div>
                         
@@ -56,20 +56,20 @@
                             <p class="mt-0" id="txtLow">L: 26</p>
                         </div>
                         <div class="col-8 mb-4">
-                            <i class="bi bi-moisture" style="font-size: 1.5rem; color: cornflowerblue;"></i>
+                            <i class="bi bi-moisture" alt="humidity gauge" style="font-size: 1.5rem; color: cornflowerblue;"></i>
                             <label class="mr-1" id="txtHumidity"></label>
                         </div> 
                     </div> 
                     <p id="txtCoH">It is colder than yesterday.</p>
                     <div class="row mb-1">
                         <p class="col-4">location: </p>
-                        <select class="col-6" id="locationSelect">
-                            <option selected value="Cookeville">
+                        <select class="col-6" id="locationSelect" aria-label="location select for weather">
+                            <option selected value="Cookeville" aria-label="Cookeville">
                                 Cookeville
                             </option>
-                            <option value="Knoxville">Knoxville</option>
-                            <option value="Nashville">Nashville</option>
-                            <option value="Memphis">Memphis</option>
+                            <option value="Knoxville" aria-label="Knoxville">Knoxville</option>
+                            <option value="Nashville" aria-label="Nashville">Nashville</option>
+                            <option value="Memphis" aria-label="Memphis">Memphis</option>
                         </select>
                     </div>
                     <a href="https://open-meteo.com/en/docs#latitude=52.52&longitude=13.41&current=temperature_2m,relative_humidity_2m,precipitation,rain,showers,snowfall,weather_code&minutely_15=&hourly=&daily=temperature_2m_max,temperature_2m_min,sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FChicago&past_days=1&models=" class="mt-3">Data provided by open-mateo.com</a>
@@ -136,12 +136,12 @@
 
         function setWeatherIcon(intRain, intSnow){
             if(intRain != 0){
-                icnWeather.innerHTML = `<i class="bi bi-cloud-drizzle" style="font-size: 1.75rem; color: cornflowerblue;"></i>`;
+                icnWeather.innerHTML = `<i class="bi bi-cloud-drizzle" alt="Raining" style="font-size: 1.75rem; color: cornflowerblue;"></i>`;
             }
             else if (intSnow != 0) {
-                icnWeather.innerHTML = `<i class="bi bi-cloud-snow" style="font-size: 1.75rem; color: cornflowerblue;"></i>`;
+                icnWeather.innerHTML = `<i class="bi bi-cloud-snow" alt="Snowing" style="font-size: 1.75rem; color: cornflowerblue;"></i>`;
             } else {
-                icnWeather.innerHTML = `<i class="bi bi-brightness-high" style="font-size: 1.75rem; color: black;"></i>`;
+                icnWeather.innerHTML = `<i class="bi bi-brightness-high" alt="Clear" style="font-size: 1.75rem; color: black;"></i>`;
             }
         }
 
@@ -152,12 +152,12 @@
 
             if((dateTime < dateSunRise)){
                 icnSun.innerHTML=`
-                    <i class="bi bi-sunrise" style="font-size: 1.5rem; color: var(--mySecondary);"></i>
+                    <i class="bi bi-sunrise" alt="Sunrise" style="font-size: 1.5rem; color: var(--mySecondary);"></i>
                 ` + `<label class="mr-1">` + dateSunRise.getHours() + `:00` + `</label>`;
             }
             else{
                 icnSun.innerHTML=`
-                    <i class="bi bi-sunset" style="font-size: 1.5rem; color: var(--myAccent);"></i>
+                    <i class="bi bi-sunset" alt="Sunset" style="font-size: 1.5rem; color: var(--myAccent);"></i>
                 ` + `<label>` + dateSunSet.getHours() + `:00`+ `</label>`;
             }
         }
